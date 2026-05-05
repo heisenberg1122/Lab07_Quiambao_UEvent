@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>UA Event | University of the Assumption</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="background-orb orb-one"></div>
+  <div class="background-orb orb-two"></div>
+
+  <header class="topbar">
+    <div>
+      <p class="eyebrow">UA Event</p>
+      <h1>University of the Assumption Event Registration System</h1>
+    </div>
+    <a class="button button-ghost" href="#events">View Events</a>
+  </header>
+
+  <main class="layout">
+    <section class="hero card">
+      <div class="hero-copy">
+        <h2>Discover UA campus events, reserve a slot, and stay updated.</h2>
+        <p>
+          A University of the Assumption student portal for browsing events and registering
+          for campus activities.
+        </p>
+        <div class="hero-actions">
+          <a class="button" href="#events">Browse Events</a>
+          <a class="button button-secondary" href="#register">Register Now</a>
+        </div>
+      </div>
+      <div class="hero-stats">
+        <div class="stat">
+          <span>Upcoming</span>
+          <strong id="upcoming-count">0</strong>
+        </div>
+        <div class="stat">
+          <span>Registered</span>
+          <strong id="registered-count">0</strong>
+        </div>
+        <div class="stat">
+          <span>Slots Left</span>
+          <strong id="slots-left-count">0</strong>
+        </div>
+      </div>
+    </section>
+
+    <section class="grid two-up">
+      <article class="card panel" id="events">
+        <div class="section-heading">
+          <p class="eyebrow">Student View</p>
+          <h3>Featured Events</h3>
+        </div>
+        <div id="event-list" class="event-list"></div>
+      </article>
+
+      <article class="card panel" id="register">
+        <div class="section-heading">
+          <p class="eyebrow">Quick Action</p>
+          <h3>Register for an Event</h3>
+        </div>
+        <form class="form" id="registration-form">
+          <label>
+            Student Number
+            <input type="text" name="studentId" placeholder="2023001847" inputmode="numeric" pattern="[0-9]*" autocomplete="off" />
+          </label>
+          <label>
+            Event
+            <select name="eventId">
+              <option value="1">Tech Seminar 2026</option>
+              <option value="2">Leadership Training</option>
+              <option value="3">Student Orientation</option>
+            </select>
+          </label>
+          <button class="button" type="submit">Submit Registration</button>
+          <p class="form-note">This is a frontend demo card for your lab output.</p>
+        </form>
+      </article>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
