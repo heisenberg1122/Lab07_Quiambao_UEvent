@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Profile — UA Event</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    :root{
+      --ink:#10254a;
+      --muted:#66758f;
+      --line:#dbe4f2;
+      --accent:#0b3f8a;
+      --accent2:#f9a620;
+      --card:#ffffff;
+      --panel:#f8fbff;
+    }
+    body{margin:0;background:linear-gradient(180deg,#f3f7ff 0%,#f7f5ef 100%);font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;color:var(--ink)}
+    .profile-shell{max-width:1120px;margin:32px auto;padding:0 20px}
+    .profile-header{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:24px}
+    .profile-header h1{font-size:clamp(2rem,4vw,3.25rem);line-height:1.05;margin:8px 0 0}
+    .eyebrow{font-size:.78rem;letter-spacing:.22em;text-transform:uppercase;color:var(--accent2);font-weight:800}
+    .profile-actions{display:flex;gap:12px;flex-wrap:wrap}
+    .button-danger{background:linear-gradient(135deg,#d84c4c,#b52e2e);color:#fff;border:none}
+    .button-danger:hover{transform:translateY(-1px);box-shadow:0 12px 24px rgba(181,46,46,.18)}
+    .profile-grid{display:grid;grid-template-columns:320px 1fr;gap:24px}
+    .card{background:var(--card);border-radius:28px;box-shadow:0 18px 45px rgba(18,32,64,.08)}
+    .profile-card{padding:24px;background:linear-gradient(180deg,#fff 0%,#fbfdff 100%)}
+    .registrations-card{padding:24px}
+    .profile-badge{width:76px;height:76px;border-radius:22px;background:linear-gradient(135deg,#0b3f8a,#3d77d1);display:grid;place-items:center;color:#fff;font-size:2rem;font-weight:900;box-shadow:0 18px 30px rgba(11,63,138,.22)}
+    .info-stack{display:grid;gap:14px;margin-top:18px}
+    .info-row{padding:14px 16px;border:1px solid var(--line);border-radius:18px;background:var(--panel)}
+    .label{display:flex;align-items:center;gap:8px;font-size:.76rem;letter-spacing:.18em;text-transform:uppercase;color:#f39a16;font-weight:900;margin-bottom:6px}
+    .value{font-size:1rem;font-weight:800;color:var(--ink);word-break:break-word}
+    .muted{color:var(--muted);line-height:1.7}
+    .pill{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:999px;background:#eef4ff;color:#15315f;font-weight:800}
+    .profile-title{display:flex;align-items:center;gap:10px}
+    .profile-title svg{width:22px;height:22px;fill:currentColor}
+    .section-title{margin:0 0 10px;font-size:clamp(1.8rem,3vw,2.8rem);line-height:1.05}
+    .registration-list{display:grid;gap:14px;margin-top:18px}
+    .registration-item{padding:18px;border:1px solid var(--line);border-radius:20px;background:linear-gradient(180deg,#fff 0%,#f8fbff 100%);display:flex;justify-content:space-between;gap:16px;align-items:flex-start}
+    .registration-item.is-registered{border-color:#bfe3c8;background:linear-gradient(180deg,#f4fff7 0%,#e9fff0 100%);box-shadow:0 12px 24px rgba(43,153,76,.08)}
+    .registration-item h4{margin:0 0 8px;font-size:1.08rem}
+    .registration-meta{display:flex;flex-wrap:wrap;gap:10px;color:var(--muted);font-size:.93rem}
+    .event-icon{width:44px;height:44px;border-radius:14px;display:grid;place-items:center;background:linear-gradient(135deg,#edf4ff,#dfeaff);color:var(--accent)}
+    .registration-item.is-registered .event-icon{background:linear-gradient(135deg,#c8f4d4,#a9e8be);color:#186b35}
+    .event-icon svg{width:22px;height:22px;fill:currentColor}
+    .empty-state{padding:18px;border:1px dashed var(--line);border-radius:16px;background:#fbfdff;color:var(--muted)}
+    .count-card{display:flex;align-items:center;gap:14px;margin-top:20px}
+    .count-icon{width:56px;height:56px;border-radius:18px;display:grid;place-items:center;background:linear-gradient(135deg,#0b3f8a,#306ed0);color:#fff;font-size:1.5rem;font-weight:900}
+    .count-copy .label{margin-bottom:4px}
+    .status-line{margin-top:16px}
+    .pill.is-registered{background:#e6f9ec;color:#146534}
+    .pill.is-signed-in{background:#eef4ff;color:#15315f}
+    .home-link{margin-top:18px;display:inline-flex}
+    @media (max-width: 900px){.profile-grid{grid-template-columns:1fr}.profile-header{flex-direction:column}.profile-header h1{font-size:2.2rem}.registration-item{flex-direction:column}}
+  </style>
+</head>
+<body>
+  <main class="profile-shell">
+    <header class="profile-header">
+      <div>
+        <div class="eyebrow">Student Profile</div>
+        <h1>My Registration Profile</h1>
+      </div>
+      <div class="profile-actions">
+        <a class="button button-ghost" href="index.html">Home</a>
+        <a class="button" href="login.html">Login</a>
+        <a class="button button-danger" id="profile-logout" href="#">Logout</a>
+      </div>
+    </header>
+
+    <section class="profile-grid">
+      <aside class="card profile-card">
+        <div class="profile-badge" id="profile-avatar">U</div>
+
+        <div class="info-stack">
+          <div class="info-row">
+            <div class="label">
+              <span aria-hidden="true">#</span>
+              Student Number
+            </div>
+            <div class="value" id="profile-number">Not signed in</div>
+          </div>
+
+          <div class="info-row">
+            <div class="label">
+              <span aria-hidden="true">@</span>
+              Student Email
+            </div>
+            <div class="value" id="profile-email">Not signed in</div>
+          </div>
+
+          <div class="info-row status-line">
+            <div class="label">
+              <span aria-hidden="true">✓</span>
+              Status
+            </div>
+            <div class="pill" id="profile-status">Loading...</div>
+          </div>
+        </div>
+
+        <p class="muted" style="margin-top:18px;">This page shows the student account and the events they are currently registered for.</p>
+      </aside>
+
+      <section class="card registrations-card">
+        <div class="eyebrow">Registered Events</div>
+        <h2 class="section-title">My Events</h2>
+        <div id="registration-list" class="registration-list"></div>
+      </section>
+    </section>
+  </main>
+
+  <script>
+    const API_BASE_URL = `${window.location.protocol}//${window.location.hostname}:8000/api`;
+    const BACKEND_ORIGIN = `${window.location.protocol}//${window.location.hostname}:8000`;
+
+    function escapeHtml(value) {
+      return String(value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function formatDate(value) {
+      if (!value) return 'Date not set';
+      const date = new Date(value);
+      return Number.isNaN(date.getTime())
+        ? value
+        : date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+    }
+
+    function hydrateFromUrl() {
+      const url = new URL(window.location.href);
+      const studentNumber = url.searchParams.get('student_number');
+      const studentEmail = url.searchParams.get('student_email');
+      const registered = url.searchParams.get('registered');
+
+      if (studentNumber) {
+        localStorage.setItem('ueventStudentNumber', studentNumber);
+      }
+
+      if (studentEmail) {
+        localStorage.setItem('ueventStudentEmail', studentEmail);
+      }
+
+      if (registered && studentNumber && studentEmail) {
+        const accountKey = `ueventRegisteredEventIds:${String(studentNumber).trim().toLowerCase()}:${String(studentEmail).trim().toLowerCase()}`;
+        const current = getStoredIds();
+        if (!current.includes(String(registered))) {
+          current.push(String(registered));
+          localStorage.setItem(accountKey, JSON.stringify(current));
+          localStorage.setItem('ueventRegisteredEventIds', JSON.stringify(current));
+        }
+      }
+    }
+
+    function renderEventIcon() {
+      return `
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M7 2h2v2h6V2h2v2h3v18H4V4h3V2zm13 8H6v10h14V10zM6 8h12V6H6v2z" />
+        </svg>
+      `;
+    }
+
+    async function loadProfile() {
+      hydrateFromUrl();
+
+      const profileNumber = document.getElementById('profile-number');
+      const profileEmail = document.getElementById('profile-email');
+      const profileStatus = document.getElementById('profile-status');
+      const avatar = document.getElementById('profile-avatar');
+      const registrationList = document.getElementById('registration-list');
+      const logoutButton = document.getElementById('profile-logout');
+
+      const studentNumber = localStorage.getItem('ueventStudentNumber') || '';
+      const studentEmail = localStorage.getItem('ueventStudentEmail') || '';
+
+      try {
+        profileNumber.textContent = studentNumber || 'Not signed in';
+        profileEmail.textContent = studentEmail || 'Not signed in';
+        avatar.textContent = (studentNumber || 'U').slice(-1).toUpperCase();
+
+        if (logoutButton) {
+          logoutButton.href = `${BACKEND_ORIGIN}/accounts/logout/?next=${encodeURIComponent(window.location.origin + '/')}`;
+        }
+
+        if (logoutButton) {
+          logoutButton.addEventListener('click', () => {
+            const keysToRemove = [];
+
+            for (let index = 0; index < localStorage.length; index += 1) {
+              const key = localStorage.key(index);
+              if (key && key.startsWith('uevent')) {
+                keysToRemove.push(key);
+              }
+            }
+
+            keysToRemove.forEach((key) => localStorage.removeItem(key));
+          });
+        }
+
+        const registrationsResponse = await fetch(`${API_BASE_URL}/registrations/`, {
+          credentials: 'include',
+        });
+
+        if (!registrationsResponse.ok) {
+          profileStatus.textContent = 'Not signed in';
+          registrationList.innerHTML = '<div class="empty-state">Please sign in to see your registrations.</div>';
+          return;
+        }
+
+        const registrations = await registrationsResponse.json();
+        const storedEventIds = registrations.map((registration) => String(registration.event));
+
+        if (!studentNumber) {
+          profileStatus.textContent = 'Not signed in';
+          registrationList.innerHTML = '<div class="empty-state">Please sign in to see your registrations.</div>';
+          return;
+        }
+
+        const eventsResponse = await fetch(`${API_BASE_URL}/events/`);
+        const events = eventsResponse.ok ? await eventsResponse.json() : [];
+        const eventMap = new Map(events.map((event) => [String(event.id), event]));
+
+        profileStatus.textContent = `${storedEventIds.length} registration(s)`;
+        profileStatus.classList.add('is-signed-in');
+
+        if (!storedEventIds.length) {
+          registrationList.innerHTML = '<div class="empty-state">No event registrations found yet. Register for an event first.</div>';
+          return;
+        }
+
+        registrationList.innerHTML = storedEventIds.map((eventId) => {
+          const event = eventMap.get(String(eventId));
+          const title = event?.title || `Event #${eventId}`;
+          const date = formatDate(event?.date);
+          const location = event?.location || 'TBA';
+          const slots = event ? `${event.remaining_slots ?? 0} slots left` : 'Details unavailable';
+
+          return `
+            <article class="registration-item is-registered">
+              <div style="display:flex;gap:14px;align-items:flex-start;">
+                <div class="event-icon">${renderEventIcon()}</div>
+                <div>
+                  <h4>${escapeHtml(title)}</h4>
+                  <div class="registration-meta">
+                    <span>${escapeHtml(date)}</span>
+                    <span>${escapeHtml(location)}</span>
+                    <span>${escapeHtml(slots)}</span>
+                  </div>
+                </div>
+              </div>
+              <span class="pill is-registered">Registered</span>
+            </article>
+          `;
+        }).join('');
+      } catch (error) {
+        console.error('profile load error', error);
+        profileStatus.textContent = 'Error loading profile';
+        registrationList.innerHTML = `<div class="empty-state">${escapeHtml(error.message || String(error))}</div>`;
+      }
+    }
+
+    loadProfile();
+  </script>
+</body>
+</html>

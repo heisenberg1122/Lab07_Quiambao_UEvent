@@ -15,7 +15,9 @@
       <p class="eyebrow">UA Event</p>
       <h1>University of the Assumption Event Registration System</h1>
     </div>
-    <a class="button button-ghost" href="#events">View Events</a>
+    <div class="profile-actions">
+      <a class="button button-secondary" href="profile.html">Profile</a>
+    </div>
   </header>
 
   <main class="layout">
@@ -49,36 +51,77 @@
 
     <section class="grid two-up">
       <article class="card panel" id="events">
-        <div class="section-heading">
-          <p class="eyebrow">Student View</p>
-          <h3>Featured Events</h3>
+        <div class="section-heading student-view-heading">
+          <div>
+            <p class="eyebrow">Student View</p>
+            <h3>Featured Events</h3>
+          </div>
         </div>
         <div id="event-list" class="event-list"></div>
       </article>
 
-      <article class="card panel" id="register">
-        <div class="section-heading">
-          <p class="eyebrow">Quick Action</p>
-          <h3>Register for an Event</h3>
-        </div>
-        <form class="form" id="registration-form">
-          <label>
-            Student Number
-            <input type="text" name="studentId" placeholder="2023001847" inputmode="numeric" pattern="[0-9]*" autocomplete="off" />
-          </label>
-          <label>
-            Event
-            <select name="eventId">
-              <option value="1">Tech Seminar 2026</option>
-              <option value="2">Leadership Training</option>
-              <option value="3">Student Orientation</option>
-            </select>
-          </label>
-          <button class="button" type="submit">Submit Registration</button>
-        </form>
-      </article>
+      <!-- Quick Action removed: registration is available from each event's details modal -->
     </section>
   </main>
+
+  <div class="modal-backdrop" id="event-modal" aria-hidden="true">
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="event-modal-title">
+      <button class="modal-close" type="button" id="event-modal-close" aria-label="Close event details">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.3 5.71 12 12l6.3 6.29-1.41 1.42L10.59 13.4 4.29 19.71 2.88 18.3 9.17 12 2.88 5.71 4.29 4.29l6.3 6.3 6.3-6.3z"/></svg>
+      </button>
+      <p class="eyebrow modal-eyebrow">Event Details</p>
+      <h3 id="event-modal-title"></h3>
+      <div class="modal-meta" id="event-modal-meta"></div>
+      <div id="event-modal-description" class="modal-description"></div>
+      <div class="modal-info">
+        <div class="modal-info-row">
+          <span class="icon-pill" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"/></svg>
+          </span>
+          <div>
+            <span class="detail-label">Location</span>
+            <strong id="event-modal-location"></strong>
+          </div>
+        </div>
+        <div class="modal-info-row">
+          <span class="icon-pill" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M7 2h2v2h6V2h2v2h3v18H4V4h3V2zm13 8H6v10h14V10zM6 8h12V6H6v2z"/></svg>
+          </span>
+          <div>
+            <span class="detail-label">Date</span>
+            <strong id="event-modal-date"></strong>
+          </div>
+        </div>
+        <div class="modal-info-row">
+          <span class="icon-pill" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M12 3a5 5 0 0 1 5 5c0 1.86-1.02 3.49-2.53 4.36C17.88 13.05 20 15.67 20 19h-2c0-2.76-2.24-5-5-5s-5 2.24-5 5H6c0-3.33 2.12-5.95 5.53-6.64A5 5 0 0 1 12 3zm0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"/></svg>
+          </span>
+          <div>
+            <span class="detail-label">Slots</span>
+            <strong id="event-modal-slots"></strong>
+          </div>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button id="event-modal-register" class="button">Register</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="register-modal" aria-hidden="true">
+    <div class="modal-card register-modal-card" role="dialog" aria-modal="true" aria-labelledby="register-modal-title">
+      <button class="modal-close" type="button" id="register-modal-close" aria-label="Close registration confirmation">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.3 5.71 12 12l6.3 6.29-1.41 1.42L10.59 13.4 4.29 19.71 2.88 18.3 9.17 12 2.88 5.71 4.29 4.29l6.3 6.3 6.3-6.3z"/></svg>
+      </button>
+      <p class="eyebrow modal-eyebrow">Register Now</p>
+      <h3 id="register-modal-title">Confirm registration</h3>
+      <div class="modal-description" id="register-modal-description"></div>
+      <div class="modal-actions">
+        <button type="button" class="button button-ghost" id="register-modal-cancel">Cancel</button>
+        <button type="button" class="button" id="register-modal-confirm">Continue</button>
+      </div>
+    </div>
+  </div>
 
   <script src="script.js"></script>
 </body>

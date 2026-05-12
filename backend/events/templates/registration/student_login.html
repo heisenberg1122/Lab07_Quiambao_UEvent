@@ -1,0 +1,43 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Student Login</title>
+  <style>
+    body{font-family:system-ui,Segoe UI,Roboto,Helvetica,Arial;margin:40px}
+    .card{max-width:420px;margin:0 auto;padding:20px;border:1px solid #eee;border-radius:8px}
+    label{display:block;margin:12px 0}
+    input{width:100%;padding:8px;border-radius:6px;border:1px solid #ccc}
+    .error{color:#900;margin-top:8px}
+    .actions{margin-top:16px}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>Student Login</h2>
+    <p>Enter your student number and student email to sign in. New users will have an account created using these details.</p>
+
+    {% if error %}
+      <div class="error">{{ error }}</div>
+    {% endif %}
+
+    <form method="post" action="">
+      {% csrf_token %}
+      <label>
+        Student Number
+        <input name="student_number" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" required />
+      </label>
+      <label>
+        Student Email
+        <input name="student_email" type="email" placeholder="you@student.ua.edu" autocomplete="email" required />
+      </label>
+      <input type="hidden" name="next" value="{{ next }}" />
+      <div class="actions">
+        <button type="submit">Sign in</button>
+      </div>
+    </form>
+  </div>
+</body>
+</html>

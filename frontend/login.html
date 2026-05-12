@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Login — UA Event</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    body{margin:0;min-height:100vh;font-family:"Inter","Segoe UI",Arial,sans-serif;color:#12213f;background:radial-gradient(circle at top left, rgba(31,95,168,.12), transparent 28%),radial-gradient(circle at bottom right, rgba(240,180,41,.14), transparent 24%),linear-gradient(180deg,#f7f9fc,#eef3fb);padding:32px}
+    .login-shell{position:relative;max-width:1120px;margin:0 auto}
+    .login-shell::before,.login-shell::after{content:"";position:fixed;border-radius:999px;filter:blur(10px);pointer-events:none;opacity:.2;z-index:-1}
+    .login-shell::before{width:280px;height:280px;background:radial-gradient(circle, rgba(31,95,168,.36), rgba(31,95,168,.08) 62%, transparent 72%);top:-70px;right:40px}
+    .login-shell::after{width:220px;height:220px;background:radial-gradient(circle, rgba(240,180,41,.24), rgba(240,180,41,.06) 62%, transparent 72%);bottom:10px;left:-50px}
+    .login-container{max-width:500px;margin:72px auto;padding:32px;background:rgba(255,255,255,.94);border-radius:28px;border:1px solid rgba(11,47,107,.12);box-shadow:0 28px 60px rgba(11,47,107,.12);backdrop-filter:blur(14px)}
+    .login-kicker{margin:0 0 10px;letter-spacing:.18em;text-transform:uppercase;font-size:.76rem;color:#f0b429;font-weight:800}
+    .login-container h2{margin:0 0 10px;font-size:clamp(2rem,4vw,3rem);line-height:.98;letter-spacing:-.04em;color:#0b2f6b}
+    .login-container p{margin:0 0 18px;color:#5d6c86;line-height:1.65}
+    .login-form{display:grid;gap:14px}
+    .login-container label{display:grid;gap:8px;font-weight:700;color:#10254a}
+    .login-container input{width:100%;padding:14px 15px;border-radius:14px;border:1px solid rgba(11,47,107,.16);background:rgba(255,255,255,.96);font:inherit;transition:border-color .22s ease,box-shadow .22s ease,transform .22s ease}
+    .login-container input:focus{outline:none;border-color:rgba(240,180,41,.72);box-shadow:0 0 0 4px rgba(240,180,41,.16)}
+    .login-actions{margin-top:6px;display:flex;gap:12px;flex-wrap:wrap}
+    .login-actions .button{min-width:136px}
+    .note{color:#66758f;font-size:.92rem;margin-top:6px}
+    .login-meta{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+    .login-chip{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;background:#eef4ff;color:#15315f;font-weight:700;font-size:.9rem}
+  </style>
+</head>
+<body>
+  <main class="login-shell">
+  <section class="login-container">
+    <div class="login-kicker">University Portal</div>
+    <h2>Student Login</h2>
+    <p>Sign in with your student number and student email. New users will have an account created.</p>
+
+    <!-- The form posts to the backend student-login view which will create/login the user and redirect to `next` -->
+    <form id="student-login-form" class="login-form" method="post" action="#">
+      <label>
+        Student Number
+        <input name="student_number" type="text" inputmode="numeric" pattern="[0-9]*" required />
+      </label>
+      <label>
+        Student Email
+        <input name="student_email" type="email" placeholder="you@student.ua.edu" required />
+      </label>
+      <input type="hidden" name="next" id="next-field" value="http://localhost:5173/" />
+      <div class="login-actions">
+        <button class="button" type="submit">Sign in</button>
+        <a class="button button-ghost" href="index.html">Home</a>
+      </div>
+      <p class="note">You will be redirected back to the event after signing in.</p>
+      <div class="login-meta">
+        <span class="login-chip">Student number</span>
+        <span class="login-chip">Student email</span>
+        <span class="login-chip">Secure session</span>
+      </div>
+    </form>
+  </section>
+  </main>
+
+    <script>
+    // Read `next` from query string and set it into the form hidden field so backend can redirect correctly.
+    // Instead of posting directly (which would require CSRF), we will redirect the browser
+    // to the backend student-login endpoint with the student_number and student_email
+    // encoded as query parameters. The backend accepts GET parameters and will complete
+    // the login/create flow and redirect to `next`.
+    (function(){
+      function qs(name){
+        name = name.replace(/[\[\]]/g, '\\$&');
+        const match = location.search.match(new RegExp('[?&]'+name+'=([^&]*)'));
+        return match ? decodeURIComponent(match[1]) : null;
+      }
+
+      const backendOrigin = `${window.location.protocol}//${window.location.hostname}:8000`;
+      const next = qs('next') || 'http://localhost:5173/';
+      if(next){
+        const el = document.getElementById('next-field');
+        el.value = next;
+      }
+
+      const form = document.getElementById('student-login-form');
+      form.action = `${backendOrigin}/accounts/student-login/`;
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        const studentNumber = form.elements['student_number'].value.trim();
+        const studentEmail = form.elements['student_email'].value.trim();
+        const nextVal = form.elements['next'].value || '/';
+
+        if (!studentNumber || !studentEmail) {
+          alert('Please enter both student number and student email.');
+          return;
+        }
+
+        const url = new URL(`${backendOrigin}/accounts/student-login/`);
+        url.searchParams.set('student_number', studentNumber);
+        url.searchParams.set('student_email', studentEmail);
+        url.searchParams.set('next', nextVal);
+
+        // Store the current student's info for the frontend profile page.
+        localStorage.setItem('ueventStudentNumber', studentNumber);
+        localStorage.setItem('ueventStudentEmail', studentEmail);
+
+        // Navigate the browser to the backend with query params; backend will
+        // perform login/create and redirect to `next` which is the resume URL.
+        window.location.href = url.toString();
+      });
+    })();
+  </script>
+</body>
+</html>

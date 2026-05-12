@@ -1,0 +1,241 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_urls static %}
+
+{% block extrastyle %}
+{{ block.super }}
+<style>
+  .uevent-dashboard {
+    display: grid;
+    gap: 24px;
+  }
+
+  .uevent-hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1.5fr) minmax(280px, 0.9fr);
+    gap: 20px;
+    padding: 24px;
+    border-radius: 18px;
+    background: linear-gradient(135deg, #0f4c81 0%, #195d94 45%, #2a7dbf 100%);
+    color: #fff;
+    box-shadow: 0 18px 40px rgba(15, 76, 129, 0.22);
+  }
+
+  .uevent-hero h1 {
+    margin: 0 0 10px;
+    font-size: clamp(1.6rem, 3vw, 2.5rem);
+  }
+
+  .uevent-hero p {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.88);
+    max-width: 62ch;
+  }
+
+  .uevent-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 18px;
+  }
+
+  .uevent-button,
+  .uevent-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 14px;
+    border-radius: 999px;
+    font-weight: 700;
+    text-decoration: none;
+    border: 1px solid rgba(255, 255, 255, 0.22);
+  }
+
+  .uevent-button {
+    background: #fff;
+    color: #0f4c81;
+  }
+
+  .uevent-link {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  .uevent-stats {
+    display: grid;
+    gap: 12px;
+  }
+
+  .stat-card {
+    padding: 18px;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+  }
+
+  .stat-card span {
+    display: block;
+    font-size: 0.88rem;
+    letter-spacing: 0.02em;
+    color: rgba(255, 255, 255, 0.82);
+  }
+
+  .stat-card strong {
+    display: block;
+    margin-top: 8px;
+    font-size: 2rem;
+    line-height: 1;
+  }
+
+  .uevent-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+  }
+
+  .uevent-panel {
+    padding: 20px;
+    border-radius: 18px;
+    background: var(--body-bg);
+    border: 1px solid var(--hairline-color);
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.02);
+  }
+
+  .uevent-panel h2,
+  .uevent-panel h3 {
+    margin-top: 0;
+  }
+
+  .uevent-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 12px;
+  }
+
+  .uevent-list li {
+    display: grid;
+    gap: 6px;
+    padding: 14px 16px;
+    border-radius: 14px;
+    background: #fff;
+    border: 1px solid var(--hairline-color);
+  }
+
+  .uevent-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    font-size: 0.9rem;
+    color: var(--body-quiet-color);
+  }
+
+  .uevent-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: #eef6ff;
+    color: #0f4c81;
+    font-weight: 700;
+  }
+
+  @media (max-width: 960px) {
+    .uevent-hero,
+    .uevent-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="uevent-dashboard">
+  <section class="uevent-hero">
+    <div>
+      <h1>UA Event Admin Dashboard</h1>
+      <p>Manage campus events, registrations, and event capacity from a cleaner backend control panel.</p>
+      <div class="uevent-actions">
+        <a class="uevent-button" href="{% url 'admin:events_event_changelist' %}">Manage Events</a>
+        <a class="uevent-link" href="{% url 'admin:events_registration_changelist' %}">View Registrations</a>
+      </div>
+    </div>
+    <div class="uevent-stats">
+      <div class="stat-card"><span>Total Events</span><strong>{{ event_stats.total_events }}</strong></div>
+      <div class="stat-card"><span>Open Events</span><strong>{{ event_stats.open_events }}</strong></div>
+      <div class="stat-card"><span>Total Registrations</span><strong>{{ event_stats.total_registrations }}</strong></div>
+      <div class="stat-card"><span>Slots Left</span><strong>{{ event_stats.total_slots_left }}</strong></div>
+    </div>
+  </section>
+
+  <div class="uevent-grid">
+    <section class="uevent-panel">
+      <h2>Quick Links</h2>
+      <ul class="uevent-list">
+        <li>
+          <strong>{% trans "Events" %}</strong>
+          <div class="uevent-meta">
+            <span>{{ event_stats.upcoming_events }} upcoming</span>
+            <span>{{ event_stats.total_capacity }} total capacity</span>
+          </div>
+          <div>
+            <a href="{% url 'admin:events_event_changelist' %}">Open event manager</a>
+          </div>
+        </li>
+        <li>
+          <strong>{% trans "Registrations" %}</strong>
+          <div class="uevent-meta">
+            <span>{{ event_stats.total_registrations }} total registrations</span>
+          </div>
+          <div>
+            <a href="{% url 'admin:events_registration_changelist' %}">Open registration manager</a>
+          </div>
+        </li>
+        <li>
+          <strong>{% trans "Users" %}</strong>
+          <div class="uevent-meta">
+            <span>Built-in Django user accounts</span>
+          </div>
+          <div>
+            <a href="{% url 'admin:auth_user_changelist' %}">Open user list</a>
+          </div>
+        </li>
+      </ul>
+    </section>
+
+    <section class="uevent-panel">
+      <h2>Recent Activity</h2>
+      <h3>Latest Events</h3>
+      <ul class="uevent-list">
+        {% for event in recent_events %}
+          <li>
+            <strong>{{ event.title }}</strong>
+            <div class="uevent-meta">
+              <span>{{ event.date }}</span>
+              <span>{{ event.location|default:"No location set" }}</span>
+              <span class="uevent-pill">{{ event.capacity }} capacity</span>
+            </div>
+          </li>
+        {% empty %}
+          <li>No events yet.</li>
+        {% endfor %}
+      </ul>
+
+      <h3 style="margin-top: 18px;">Latest Registrations</h3>
+      <ul class="uevent-list">
+        {% for registration in recent_registrations %}
+          <li>
+            <strong>{{ registration.user }}</strong>
+            <div class="uevent-meta">
+              <span>{{ registration.event.title }}</span>
+              <span>{{ registration.created_at|date:"M d, Y H:i" }}</span>
+            </div>
+          </li>
+        {% empty %}
+          <li>No registrations yet.</li>
+        {% endfor %}
+      </ul>
+    </section>
+  </div>
+</div>
+{% endblock %}
