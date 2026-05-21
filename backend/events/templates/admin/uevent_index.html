@@ -225,7 +225,7 @@
       <ul class="uevent-list">
         {% for registration in recent_registrations %}
           <li>
-            <strong>{{ registration.user }}</strong>
+            <strong>{{ registration.student }}</strong>
             <div class="uevent-meta">
               <span>{{ registration.event.title }}</span>
               <span>{{ registration.created_at|date:"M d, Y H:i" }}</span>

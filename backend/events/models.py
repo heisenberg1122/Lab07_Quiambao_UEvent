@@ -2,6 +2,18 @@ from django.conf import settings
 from django.db import models
 
 
+class Student(models.Model):
+	student_number = models.CharField(max_length=50, unique=True)
+	email = models.EmailField(unique=True)
+	created_at = models.DateTimeField(auto_now_add=True)
+
+	class Meta:
+		ordering = ['student_number']
+
+	def __str__(self):
+		return self.student_number
+
+
 class Event(models.Model):
 	title = models.CharField(max_length=200)
 	description = models.TextField(blank=True)
@@ -27,14 +39,14 @@ class Event(models.Model):
 
 
 class Registration(models.Model):
-	user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='event_registrations')
+	student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='event_registrations')
 	event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name='registrations')
 	created_at = models.DateTimeField(auto_now_add=True)
 
 	class Meta:
 		constraints = [
-			models.UniqueConstraint(fields=['user', 'event'], name='unique_user_event_registration'),
+			models.UniqueConstraint(fields=['student', 'event'], name='unique_student_event_registration'),
 		]
 
 	def __str__(self):
-		return f'{self.user} -> {self.event}'
+		return f'{self.student} -> {self.event}'

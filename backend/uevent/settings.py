@@ -139,3 +139,15 @@ CORS_ALLOW_CREDENTIALS = True
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_URL = '/accounts/student-login/'
 LOGIN_REDIRECT_URL = '/'
+
+# ==========================================
+# REAL EMAIL CONFIGURATION (SMTP)
+# ==========================================
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+
+# Change these to your actual Gmail address and App Password
+EMAIL_HOST_USER = 'cjmquiambao.student@ua.edu.ph' 
+EMAIL_HOST_PASSWORD = 'glizwciqamkatqmj'

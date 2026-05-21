@@ -2,8 +2,6 @@ const API_BASE_URL = `${window.location.protocol}//${window.location.hostname}:8
 
 const eventList = document.getElementById('event-list');
 const registrationForm = document.getElementById('registration-form');
-// `eventSelect` may not exist because the Quick Action form was removed.
-// Declare it safely so functions that check for its presence don't throw.
 const eventSelect = registrationForm?.elements?.eventId ?? null;
 const modalRegisterButton = document.getElementById('event-modal-register');
 const upcomingCount = document.getElementById('upcoming-count');
@@ -61,8 +59,6 @@ function getStoredEventIdsForCurrentAccount() {
       return current;
     }
 
-    // Backward compatibility: if the account-specific cache is empty but the
-    // old shared cache still has values, migrate them into the current account.
     const legacy = getLegacyRegisteredEventIds();
     if (legacy.length > 0) {
       localStorage.setItem(accountKey, JSON.stringify(legacy));
@@ -317,7 +313,6 @@ function openEventModal(event) {
     eventModalSlots.textContent = `${event.remaining_slots ?? 0} slots left`;
   }
 
-  // track current event for the modal register action
   currentModalEventId = event.id;
 
   if (modalRegisterButton) {
@@ -405,11 +400,9 @@ async function loadEvents() {
 
   try {
     await loadRegisteredEventIds();
-
     const response = await fetch(`${API_BASE_URL}/events/`);
 
     if (!response.ok) {
-      // try to read body for helpful debugging information
       let bodyText = '';
       try {
         const contentType = response.headers.get('content-type') || '';
@@ -423,7 +416,6 @@ async function loadEvents() {
         bodyText = '<unable to read response body>';
       }
 
-      console.error('Failed to load events', response.status, response.statusText, bodyText);
       eventList.innerHTML = `
         <p>Unable to load events from the backend.</p>
         <p>Status: ${response.status} ${escapeHtml(response.statusText || '')}</p>
@@ -489,9 +481,6 @@ async function loadEvents() {
   }
 }
 
-// Register from modal: redirect to resume endpoint which will enforce login and
-// complete registration after authentication. This avoids CSRF issues from AJAX
-// session POSTs and ensures the user lands back on the frontend when done.
 if (modalRegisterButton) {
   modalRegisterButton.addEventListener('click', () => {
     if (!currentModalEventId) return;
@@ -527,10 +516,6 @@ if (registerModal) {
   });
 }
 
-loadEvents();
-hydrateUserFromUrl();
-storeRegisteredEventFromUrl();
-
 if (eventModalClose) {
   eventModalClose.addEventListener('click', closeEventModal);
 }
@@ -549,3 +534,18 @@ document.addEventListener('keydown', (event) => {
     closeRegisterModal();
   }
 });
+
+// ==========================================
+// AUTHENTICATION GUARD
+// ==========================================
+hydrateUserFromUrl();
+
+const currentStudentNum = localStorage.getItem('ueventStudentNumber');
+const currentStudentEmail = localStorage.getItem('ueventStudentEmail');
+
+if (!currentStudentNum || !currentStudentEmail) {
+  window.location.href = 'login.html';
+} else {
+  storeRegisteredEventFromUrl();
+  loadEvents();
+}

@@ -7,7 +7,7 @@ from django.template.response import TemplateResponse
 from django.utils import timezone
 from django.utils.html import format_html
 
-from .models import Event, Registration
+from .models import Event, Registration, Student
 
 
 class UEventAdminSite(admin.AdminSite):
@@ -27,7 +27,7 @@ class UEventAdminSite(admin.AdminSite):
 		)
 		registration_stats = Registration.objects.aggregate(total_registrations=Count('id'))
 		recent_events = Event.objects.order_by('-created_at')[:5]
-		recent_registrations = Registration.objects.select_related('user', 'event').order_by('-created_at')[:5]
+		recent_registrations = Registration.objects.select_related('student', 'event').order_by('-created_at')[:5]
 
 		stats = {
 			'total_events': event_stats['total_events'] or 0,
@@ -67,7 +67,7 @@ def deactivate_events(modeladmin, request, queryset):
 class RegistrationInline(admin.TabularInline):
 	model = Registration
 	extra = 0
-	fields = ('user', 'created_at')
+	fields = ('student', 'created_at')
 	readonly_fields = ('created_at',)
 	can_delete = False
 
@@ -113,16 +113,16 @@ class EventAdmin(admin.ModelAdmin):
 
 @admin.register(Registration, site=uevent_admin_site)
 class RegistrationAdmin(admin.ModelAdmin):
-	list_display = ('user', 'event', 'event_date', 'created_at')
+	list_display = ('student', 'event', 'event_date', 'created_at')
 	list_filter = ('event', 'created_at')
-	search_fields = ('user__username', 'event__title', 'event__location')
+	search_fields = ('student__student_number', 'student__email', 'event__title', 'event__location')
 	autocomplete_fields = ('event',)
-	list_select_related = ('user', 'event')
+	list_select_related = ('student', 'event')
 	ordering = ('-created_at',)
 	readonly_fields = ('created_at',)
 	fieldsets = (
 		('Registration Details', {
-			'fields': ('user', 'event')
+			'fields': ('student', 'event')
 		}),
 		('System Info', {
 			'fields': ('created_at',)
@@ -132,6 +132,22 @@ class RegistrationAdmin(admin.ModelAdmin):
 	@admin.display(ordering='event__date', description='Event Date')
 	def event_date(self, obj):
 		return obj.event.date
+
+
+@admin.register(Student, site=uevent_admin_site)
+class StudentAdmin(admin.ModelAdmin):
+	list_display = ('student_number', 'email', 'created_at')
+	search_fields = ('student_number', 'email')
+	ordering = ('student_number',)
+	readonly_fields = ('created_at',)
+	fieldsets = (
+		('Student Account', {
+			'fields': ('student_number', 'email')
+		}),
+		('System Info', {
+			'fields': ('created_at',)
+		}),
+	)
 
 
 uevent_admin_site.register(Group, GroupAdmin)
